@@ -133,7 +133,6 @@ public class Game implements Runnable {
         }
     }
 
-    Sprite test;
     Sprite background;
     Sprite hamlet;
 
@@ -146,12 +145,11 @@ public class Game implements Runnable {
         ImageIcon hammy = new ImageIcon("src/main/resources/hamlet.png");
         hamlet = new Sprite(hammy.getImage(), 300, 300); */
 
-
         BufferedImage bg;
         BufferedImage hammy;
         try {
-            bg = ImageIO.read(new File("src/main/resources/bg.png"));
-            hammy = ImageIO.read(new File("src/main/resources/hamlet.png"));
+            bg = ImageIO.read(new File("src/main/resources/assets/bg.png"));
+            hammy = ImageIO.read(new File("src/main/resources/assets/hamlet.png")); //src/main/resources/assets
             background = new Sprite(bg, 0, 0);
             hamlet = new Sprite(hammy, 300, 300);
         } catch (IOException e) {
@@ -206,25 +204,16 @@ public class Game implements Runnable {
         bufferStrategy.show();
     }
 
-    //TESTING
-    private double x = 0;
-
     /**
-     *
+     * Update method.
      */
     protected void update(int deltaTime) {
-        x += deltaTime * 0.2;
-        while(x > 500) {
-            x -= 500;
-        }
     }
 
     /**
-     *
+     * Main rendering method.
      */
     protected void render(Graphics2D g) {
-        //g.setColor(Color.BLUE);
-        //g.fillRect((int)x, 0, 200, 200);
         g.drawImage(hamlet.getImage(), hamlet.getX(), hamlet.getY(), null);
     }
 
