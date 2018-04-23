@@ -225,7 +225,6 @@ public class Game implements Runnable {
     protected void render(Graphics2D g) {
         //g.setColor(Color.BLUE);
         //g.fillRect((int)x, 0, 200, 200);
-        g.drawImage(test.getImage(), test.getX(), test.getY(), null);
         g.drawImage(hamlet.getImage(), hamlet.getX(), hamlet.getY(), null);
     }
 
