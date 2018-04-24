@@ -148,8 +148,8 @@ public class Game implements Runnable {
         BufferedImage bg;
         BufferedImage hammy;
         try {
-            bg = ImageIO.read(new File("src/main/resources/assets/bg.png"));
-            hammy = ImageIO.read(new File("src/main/resources/assets/hamlet.png")); //src/main/resources/assets
+            bg = ImageIO.read(new File("src/main/resources/assets/bg.png")); // TODO: get it working with .jar compiler
+            hammy = ImageIO.read(new File("src/main/resources/assets/hamlet.png")); // src/main/resources/assets
             background = new Sprite(bg, 0, 0);
             hamlet = new Sprite(hammy, 300, 300);
         } catch (IOException e) {
