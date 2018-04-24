@@ -135,6 +135,11 @@ public class Game implements Runnable {
 
     Sprite background;
     Sprite hamlet;
+    Sprite test;
+
+    BufferedImage bg;
+    BufferedImage hammy;
+    BufferedImage testy;
 
     public void initGame() {
 
@@ -145,13 +150,14 @@ public class Game implements Runnable {
         ImageIcon hammy = new ImageIcon("src/main/resources/hamlet.png");
         hamlet = new Sprite(hammy.getImage(), 300, 300); */
 
-        BufferedImage bg;
-        BufferedImage hammy;
         try {
             bg = ImageIO.read(new File("src/main/resources/assets/bg.png")); // TODO: get it working with .jar compiler
             hammy = ImageIO.read(new File("src/main/resources/assets/hamlet.png")); // src/main/resources/assets
+            testy = ImageIO.read(new File("src/main/resources/assets/shield.png"));
+
             background = new Sprite(bg, 0, 0);
             hamlet = new Sprite(hammy, 300, 300);
+            test = new Sprite(testy, 500, 500);
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -208,6 +214,10 @@ public class Game implements Runnable {
      * Update method.
      */
     protected void update(int deltaTime) {
+        if(getItemCollision(hamlet, test)) { //TODO: remove the collected sprite item after collision
+            hamlet.setImage(testy);
+            test.setVisible(false);
+        }
     }
 
     /**
@@ -215,6 +225,7 @@ public class Game implements Runnable {
      */
     protected void render(Graphics2D g) {
         g.drawImage(hamlet.getImage(), hamlet.getX(), hamlet.getY(), null);
+        if(test.isVisible()) g.drawImage(test.getImage(), test.getX(), test.getY(), null);
     }
 
     public boolean collision(Sprite s) {
@@ -232,6 +243,26 @@ public class Game implements Runnable {
             return Direction.DOWN;
         } else {
             return Direction.NONE;
+        }
+    }
+
+    public Rectangle getObjectBounds(Sprite s) {
+        Rectangle bounds;
+        int sSizeX = s.getImage().getWidth(null);
+        int sSizeY = s.getImage().getHeight(null);
+
+        bounds = new Rectangle(s.getX(), s.getY(), sSizeX, sSizeY);
+        return bounds;
+    }
+
+    public boolean getItemCollision(Sprite s1, Sprite s2) {
+        Rectangle s1Bounds = new Rectangle(getObjectBounds(s1));
+        Rectangle s2Bounds = new Rectangle(getObjectBounds(s2));
+
+        if(s1.isVisible() && s2.isVisible()) {
+            return s1Bounds.intersects(s2Bounds);
+        } else {
+            return false;
         }
     }
 
