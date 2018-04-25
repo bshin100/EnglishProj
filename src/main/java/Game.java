@@ -146,14 +146,13 @@ public class Game implements Runnable {
         // TESTING
         /*ImageIcon bg = new ImageIcon("src/main/resources/bg.png");
         background = new Sprite(bg.getImage(), 0, 0);
-
         ImageIcon hammy = new ImageIcon("src/main/resources/hamlet.png");
         hamlet = new Sprite(hammy.getImage(), 300, 300); */
 
         try {
-            bg = ImageIO.read(new File("src/main/resources/assets/bg.png")); // TODO: get it working with .jar compiler
-            hammy = ImageIO.read(new File("src/main/resources/assets/hamlet.png")); // src/main/resources/assets
-            testy = ImageIO.read(new File("src/main/resources/assets/shield.png"));
+            bg = ImageIO.read(getClass().getResource("/assets/bg.png")); //start with /main/... for intellij
+            hammy = ImageIO.read(getClass().getResource("/assets/hamlet.png"));
+            testy = ImageIO.read(getClass().getResource("/assets/shield.png"));
 
             background = new Sprite(bg, 0, 0);
             hamlet = new Sprite(hammy, 300, 300);
