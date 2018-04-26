@@ -8,8 +8,7 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
+import java.awt.font.FontRenderContext;
 import java.awt.image.BufferStrategy;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
@@ -22,6 +21,7 @@ public class Game implements Runnable {
 
     final int WIDTH = 1000;
     final int HEIGHT = 700;
+    boolean startScreen = true;
 
     JFrame frame;
     Canvas canvas;
@@ -40,7 +40,6 @@ public class Game implements Runnable {
 
         panel.add(canvas);
 
-        canvas.addMouseListener(new MouseControl());
         canvas.addKeyListener(new KeyControl());
 
         frame.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
@@ -90,48 +89,13 @@ public class Game implements Runnable {
                     hamlet.setX(hamlet.getX() + 5);
                 }
             }
-        }
-
-        public void keyReleased(KeyEvent e) {
-            /*int key = e.getKeyCode();
-            if (key == KeyEvent.VK_W) {
-            } else if (key == KeyEvent.VK_A) {
-            } else if (key == KeyEvent.VK_S) {
-            } else if (key == KeyEvent.VK_D) {
-            } */
-        }
-    }
-
-    private class MouseControl extends MouseAdapter {
-        boolean mouseLeftPressed, mouseRightPressed;
-
-        public void mouseClicked(MouseEvent e) {}
-        public void mouseDragged(MouseEvent e) {}
-        public void mouseEntered(MouseEvent e) {}
-        public void mouseExited(MouseEvent e) {}
-        public void mouseMoved(MouseEvent e) {}
-        public void mousePressed(MouseEvent e) {
-            switch(e.getButton()) {
-                case MouseEvent.BUTTON1:
-                    mouseLeftPressed = true;
-                    break;
-                case MouseEvent.BUTTON3:
-                    mouseRightPressed = true;
-                    break;
+            if (key == KeyEvent.VK_SPACE && startScreen) {
+                startScreen = false;
             }
         }
-        public void mouseReleased(MouseEvent e) {
-            switch(e.getButton()) {
-                case MouseEvent.BUTTON1:
-                    mouseLeftPressed = false;
-                    break;
-                case MouseEvent.BUTTON3:
-                    mouseRightPressed = false;
-                    break;
-            }
-        }
-    }
 
+        public void keyReleased(KeyEvent e) {}
+    }
 
     Rectangle deathBox;
 
@@ -161,7 +125,7 @@ public class Game implements Runnable {
     BufferedImage hamletShield;
     BufferedImage shieldy;
 
-    public void initGame() {
+    private void initGame() {
 
         // TESTING
         /*ImageIcon bg = new ImageIcon("src/main/resources/bg.png");
@@ -243,17 +207,42 @@ public class Game implements Runnable {
     private void render() {
         Graphics2D g = (Graphics2D) bufferStrategy.getDrawGraphics();
         g.clearRect(0, 0, WIDTH, HEIGHT);
-        g.drawImage(background.getImage(), background.getX(), background.getY(), null);
-        g.drawImage(foreground.getImage(), foreground.getX(), background.getY(), null);
-        render(g);
+        if(startScreen) {
+            renderStartScreen(g);
+        } else {
+            render(g);
+        }
         g.dispose();
         bufferStrategy.show();
+    }
+
+    private void renderStartScreen(Graphics2D g) {
+        Font title = new Font(Font.SANS_SERIF, Font.BOLD, 70);
+        Font subtitle = new Font(Font.SANS_SERIF, Font.PLAIN, 32);
+        Font startmsg = new Font(Font.SANS_SERIF, Font.ITALIC, 24);
+        Font credits = new Font(Font.SANS_SERIF, Font.PLAIN, 24);
+        FontRenderContext fontRenderContext = g.getFontRenderContext();
+
+        String titleStr = "Hamlet Adventure";
+        String subTStr = "Collect items to help you defeat the boss!";
+        String startStr = "Press SPACE to start game.";
+        String creditStr = "Created by Brian Shin in about 22 working hours and with 1000+ lines of code.";
+
+        g.setColor(Color.black);
+        g.setFont(title);
+        g.drawString(titleStr, calcCenter(titleStr, title, fontRenderContext), 100);
+        g.setFont(subtitle);
+        g.drawString(subTStr, calcCenter(subTStr, subtitle, fontRenderContext), 200);
+        g.setFont(startmsg);
+        g.drawString(startStr, calcCenter(startStr, startmsg, fontRenderContext), 400);
+        g.setFont(credits);
+        g.drawString(creditStr, calcCenter(creditStr, credits, fontRenderContext), 675);
     }
 
     /**
      * Update method; game logic.
      */
-    protected void update(int deltaTime) {
+    private void update(int deltaTime) {
         if(getItemCollision(hamlet, shield)) { // For the "collection" of items
             hamlet.setImage(hamletShield);
             shield.setVisible(false);
@@ -278,7 +267,10 @@ public class Game implements Runnable {
     /**
      * Main rendering method.
      */
-    protected void render(Graphics2D g) {
+    private void render(Graphics2D g) {
+        g.drawImage(background.getImage(), background.getX(), background.getY(), null);
+        g.drawImage(foreground.getImage(), foreground.getX(), background.getY(), null);
+
         if(hamlet.isVisible()) {
             g.drawImage(hamlet.getImage(), hamlet.getX(), hamlet.getY(), null);
         } else {
@@ -294,11 +286,11 @@ public class Game implements Runnable {
         }
     }
 
-    public boolean collision(Sprite s) {
+    private boolean collision(Sprite s) {
         return (s.getX() < 0 || s.getY() < 0 || s.getX() > (WIDTH - 30) || s.getY() > (HEIGHT - 45));
     }
 
-    public Direction getCollDir(Sprite s) {
+    private Direction getCollDir(Sprite s) {
         if(s.getX() < 0) {
            return Direction.LEFT;
         } else if(s.getY() < 0) {
@@ -312,7 +304,7 @@ public class Game implements Runnable {
         }
     }
 
-    public Rectangle getObjectBounds(Sprite s) {
+    private Rectangle getObjectBounds(Sprite s) {
         Rectangle bounds;
         int sSizeX = s.getImage().getWidth(null);
         int sSizeY = s.getImage().getHeight(null);
@@ -321,20 +313,22 @@ public class Game implements Runnable {
         return bounds;
     }
 
-    public boolean getItemCollision(Sprite s1, Sprite s2) {
+    private boolean getItemCollision(Sprite s1, Sprite s2) {
         Rectangle s1Bounds = new Rectangle(getObjectBounds(s1));
         Rectangle s2Bounds = new Rectangle(getObjectBounds(s2));
 
-        if(s1.isVisible() && s2.isVisible()) {
-            return s1Bounds.intersects(s2Bounds);
-        } else {
-            return false;
-        }
+        return s1.isVisible() && s2.isVisible() && s1Bounds.intersects(s2Bounds);
     }
 
-    public boolean enteredBoundary(Sprite s, Rectangle rect) {
+    private boolean enteredBoundary(Sprite s, Rectangle rect) {
         Rectangle sBounds = new Rectangle(getObjectBounds(s));
         return sBounds.intersects(rect);
+    }
+
+    private int calcCenter(String text, Font font, FontRenderContext fontRenderContext) {
+        final int width = (int) font.createGlyphVector(fontRenderContext, text).getVisualBounds().getWidth();
+        final int centerPos = 1000;
+        return (centerPos - width) / 2;
     }
 
     public static void main(String[] args) {
