@@ -132,19 +132,34 @@ public class Game implements Runnable {
         }
     }
 
+
+    Rectangle deathBox;
+
     Sprite background;
     Sprite foreground;
     Sprite hamlet;
     Sprite death;
     Sprite deathScreen;
-    Sprite test;
+    Sprite fightScreen;
+    Sprite skull;
+    Sprite crown;
+    Sprite poison;
+    Sprite shield;
 
     BufferedImage bg;
     BufferedImage fg;
     BufferedImage hammy;
     BufferedImage deathy;
     BufferedImage deathScreenImg;
-    BufferedImage testy;
+    BufferedImage fightScreenImg;
+    BufferedImage skully;
+    BufferedImage crowny;
+    BufferedImage poisony;
+    BufferedImage hamletCrown;
+    BufferedImage hamletSkull;
+    BufferedImage hamletPoison;
+    BufferedImage hamletShield;
+    BufferedImage shieldy;
 
     public void initGame() {
 
@@ -158,16 +173,30 @@ public class Game implements Runnable {
             bg = ImageIO.read(getClass().getResource("/assets/bg.png")); //start with /main/... for intellij
             fg = ImageIO.read(getClass().getResource("/assets/fg.png"));
             hammy = ImageIO.read(getClass().getResource("/assets/hamlet.png"));
-            deathy = ImageIO.read(getClass().getResource("/assets/hamlet.png")); //TODO: change to real death sprite when made
+            deathy = ImageIO.read(getClass().getResource("/assets/death.png")); //TODO: change to real death sprite when made
             deathScreenImg = ImageIO.read(getClass().getResource("/assets/deathscreen.png"));
-            testy = ImageIO.read(getClass().getResource("/assets/shield.png"));
+            fightScreenImg = ImageIO.read(getClass().getResource("/assets/fightscreen.png"));
+            skully = ImageIO.read(getClass().getResource("/assets/skull.png"));
+            crowny = ImageIO.read(getClass().getResource("/assets/crown.png"));
+            poisony = ImageIO.read(getClass().getResource("/assets/poison.png"));
+            hamletCrown = ImageIO.read(getClass().getResource("/assets/hamletcrown.png"));
+            hamletSkull = ImageIO.read(getClass().getResource("/assets/hamletskull.png"));
+            hamletPoison = ImageIO.read(getClass().getResource("/assets/hamletpoison.png"));
+            hamletShield = ImageIO.read(getClass().getResource("/assets/hamletshield.png"));
+            shieldy = ImageIO.read(getClass().getResource("/assets/shield.png"));
 
             background = new Sprite(bg, 0, 0);
             foreground = new Sprite(fg, 0, 0);
-            hamlet = new Sprite(hammy, 300, 300);
-            death = new Sprite(deathy, 400, 400);
+            hamlet = new Sprite(hammy, 455, 650);
+            death = new Sprite(deathy, 500, 380);
             deathScreen = new Sprite(deathScreenImg, 0, 0);
-            test = new Sprite(testy, 500, 500);
+            fightScreen = new Sprite(fightScreenImg, 0, 0);
+            skull = new Sprite(skully, 75, 120);
+            crown = new Sprite(crowny, 915, 540);
+            poison = new Sprite(poisony, 900, 100);
+            shield = new Sprite(shieldy, 200, 480);
+
+            deathBox = new Rectangle(death.getX()-80, death.getY()-80, death.getImage().getWidth(null)+160, death.getImage().getHeight(null)+160);
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -225,9 +254,21 @@ public class Game implements Runnable {
      * Update method; game logic.
      */
     protected void update(int deltaTime) {
-        if(getItemCollision(hamlet, test)) { // For the "collection" of items
-            hamlet.setImage(testy);
-            test.setVisible(false);
+        if(getItemCollision(hamlet, shield)) { // For the "collection" of items
+            hamlet.setImage(hamletShield);
+            shield.setVisible(false);
+        }
+        if(getItemCollision(hamlet, skull)) {
+            hamlet.setImage(hamletSkull);
+            skull.setVisible(false);
+        }
+        if(getItemCollision(hamlet, crown)) {
+            hamlet.setImage(hamletCrown);
+            crown.setVisible(false);
+        }
+        if(getItemCollision(hamlet, poison)) {
+            hamlet.setImage(hamletPoison);
+            poison.setVisible(false);
         }
         if(getItemCollision(hamlet, death)) { // RIP
             hamlet.die();
@@ -244,7 +285,13 @@ public class Game implements Runnable {
             g.drawImage(deathScreen.getImage(), deathScreen.getX(), deathScreen.getY(), null);
         }
         if(death.isVisible()) g.drawImage(death.getImage(), death.getX(), death.getY(), null);
-        if(test.isVisible()) g.drawImage(test.getImage(), test.getX(), test.getY(), null);
+        if(skull.isVisible()) g.drawImage(skull.getImage(), skull.getX(), skull.getY(), null);
+        if(crown.isVisible()) g.drawImage(crown.getImage(), crown.getX(), crown.getY(), null);
+        if(poison.isVisible()) g.drawImage(poison.getImage(), poison.getX(), poison.getY(), null);
+        if(shield.isVisible()) g.drawImage(shield.getImage(), shield.getX(), shield.getY(), null);
+        if(enteredBoundary(hamlet, deathBox) && hamlet.isVisible()) {
+            g.drawImage(fightScreen.getImage(), fightScreen.getX(), fightScreen.getY(), null);
+        }
     }
 
     public boolean collision(Sprite s) {
@@ -283,6 +330,11 @@ public class Game implements Runnable {
         } else {
             return false;
         }
+    }
+
+    public boolean enteredBoundary(Sprite s, Rectangle rect) {
+        Rectangle sBounds = new Rectangle(getObjectBounds(s));
+        return sBounds.intersects(rect);
     }
 
     public static void main(String[] args) {
