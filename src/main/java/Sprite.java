@@ -10,11 +10,9 @@ public class Sprite {
 
     private boolean visible;
     private Image image;
-    protected int x;
-    protected int y;
-    protected Direction d;
-    protected boolean dying;
-    protected int dx;
+    private int x;
+    private int y;
+    private Direction d;
 
     public Sprite() {
         visible = true;
@@ -70,13 +68,5 @@ public class Sprite {
 
     public Direction getDirection() {
         return d;
-    }
-
-    public void setDying(boolean dying) {
-        this.dying = dying;
-    }
-
-    public boolean isDying() {
-        return this.dying;
     }
 }

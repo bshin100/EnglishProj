@@ -12,7 +12,6 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.image.BufferStrategy;
 import java.awt.image.BufferedImage;
-import java.io.File;
 import java.io.IOException;
 
 /*
@@ -134,11 +133,17 @@ public class Game implements Runnable {
     }
 
     Sprite background;
+    Sprite foreground;
     Sprite hamlet;
+    Sprite death;
+    Sprite deathScreen;
     Sprite test;
 
     BufferedImage bg;
+    BufferedImage fg;
     BufferedImage hammy;
+    BufferedImage deathy;
+    BufferedImage deathScreenImg;
     BufferedImage testy;
 
     public void initGame() {
@@ -151,11 +156,17 @@ public class Game implements Runnable {
 
         try {
             bg = ImageIO.read(getClass().getResource("/assets/bg.png")); //start with /main/... for intellij
+            fg = ImageIO.read(getClass().getResource("/assets/fg.png"));
             hammy = ImageIO.read(getClass().getResource("/assets/hamlet.png"));
+            deathy = ImageIO.read(getClass().getResource("/assets/hamlet.png")); //TODO: change to real death sprite when made
+            deathScreenImg = ImageIO.read(getClass().getResource("/assets/deathscreen.png"));
             testy = ImageIO.read(getClass().getResource("/assets/shield.png"));
 
             background = new Sprite(bg, 0, 0);
+            foreground = new Sprite(fg, 0, 0);
             hamlet = new Sprite(hammy, 300, 300);
+            death = new Sprite(deathy, 400, 400);
+            deathScreen = new Sprite(deathScreenImg, 0, 0);
             test = new Sprite(testy, 500, 500);
         } catch (IOException e) {
             e.printStackTrace();
@@ -204,18 +215,22 @@ public class Game implements Runnable {
         Graphics2D g = (Graphics2D) bufferStrategy.getDrawGraphics();
         g.clearRect(0, 0, WIDTH, HEIGHT);
         g.drawImage(background.getImage(), background.getX(), background.getY(), null);
+        g.drawImage(foreground.getImage(), foreground.getX(), background.getY(), null);
         render(g);
         g.dispose();
         bufferStrategy.show();
     }
 
     /**
-     * Update method.
+     * Update method; game logic.
      */
     protected void update(int deltaTime) {
-        if(getItemCollision(hamlet, test)) { //TODO: remove the collected sprite item after collision
+        if(getItemCollision(hamlet, test)) { // For the "collection" of items
             hamlet.setImage(testy);
             test.setVisible(false);
+        }
+        if(getItemCollision(hamlet, death)) { // RIP
+            hamlet.die();
         }
     }
 
@@ -223,7 +238,12 @@ public class Game implements Runnable {
      * Main rendering method.
      */
     protected void render(Graphics2D g) {
-        g.drawImage(hamlet.getImage(), hamlet.getX(), hamlet.getY(), null);
+        if(hamlet.isVisible()) {
+            g.drawImage(hamlet.getImage(), hamlet.getX(), hamlet.getY(), null);
+        } else {
+            g.drawImage(deathScreen.getImage(), deathScreen.getX(), deathScreen.getY(), null);
+        }
+        if(death.isVisible()) g.drawImage(death.getImage(), death.getX(), death.getY(), null);
         if(test.isVisible()) g.drawImage(test.getImage(), test.getX(), test.getY(), null);
     }
 
@@ -265,7 +285,7 @@ public class Game implements Runnable {
         }
     }
 
-    public static void main(String [] args) {
+    public static void main(String[] args) {
         Game ex = new Game();
         new Thread(ex).start();
     }
