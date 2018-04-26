@@ -57,7 +57,7 @@ public class Game implements Runnable {
         public void keyPressed(KeyEvent e) {
             int key = e.getKeyCode();
 
-            if (key == KeyEvent.VK_W) {
+            if (key == KeyEvent.VK_W || key == KeyEvent.VK_UP) {
                 hamlet.setDirection(Direction.UP);
                 if(!collision(hamlet)) {
                     hamlet.setY(hamlet.getY() - 5);
@@ -65,7 +65,7 @@ public class Game implements Runnable {
                     hamlet.setY(hamlet.getY() - 5);
                 }
             }
-            if (key == KeyEvent.VK_A) {
+            if (key == KeyEvent.VK_A || key == KeyEvent.VK_LEFT) {
                 hamlet.setDirection(Direction.LEFT);
                 if(!collision(hamlet)) {
                     hamlet.setX(hamlet.getX() - 5);
@@ -73,7 +73,7 @@ public class Game implements Runnable {
                     hamlet.setX(hamlet.getX() - 5);
                 }
             }
-            if (key == KeyEvent.VK_S) {
+            if (key == KeyEvent.VK_S || key == KeyEvent.VK_DOWN) {
                 hamlet.setDirection(Direction.DOWN);
                 if(!collision(hamlet)) {
                     hamlet.setY(hamlet.getY() + 5);
@@ -81,7 +81,7 @@ public class Game implements Runnable {
                     hamlet.setY(hamlet.getY() + 5);
                 }
             }
-            if (key == KeyEvent.VK_D) {
+            if (key == KeyEvent.VK_D || key == KeyEvent.VK_RIGHT) {
                 hamlet.setDirection(Direction.RIGHT);
                 if(!collision(hamlet)) {
                     hamlet.setX(hamlet.getX() + 5);
