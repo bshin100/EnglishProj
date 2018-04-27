@@ -156,7 +156,7 @@ public class Game implements Runnable {
             deathScreen = new Sprite(deathScreenImg, 0, 0);
             fightScreen = new Sprite(fightScreenImg, 0, 0);
             skull = new Sprite(skully, 75, 120);
-            crown = new Sprite(crowny, 915, 540);
+            crown = new Sprite(crowny, 915, 510);
             poison = new Sprite(poisony, 900, 100);
             shield = new Sprite(shieldy, 200, 480);
 
