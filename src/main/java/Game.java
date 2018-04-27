@@ -270,7 +270,6 @@ public class Game implements Runnable {
     private void render(Graphics2D g) {
         g.drawImage(background.getImage(), background.getX(), background.getY(), null);
         g.drawImage(foreground.getImage(), foreground.getX(), background.getY(), null);
-        g.drawRect(death.getX()-80, death.getY()-80, death.getImage().getWidth(null)+160, death.getImage().getHeight(null)+160);
         if(hamlet.isVisible()) {
             g.drawImage(hamlet.getImage(), hamlet.getX(), hamlet.getY(), null);
         } else {
