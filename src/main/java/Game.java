@@ -270,7 +270,7 @@ public class Game implements Runnable {
     private void render(Graphics2D g) {
         g.drawImage(background.getImage(), background.getX(), background.getY(), null);
         g.drawImage(foreground.getImage(), foreground.getX(), background.getY(), null);
-
+        g.drawRect(death.getX()-80, death.getY()-80, death.getImage().getWidth(null)+160, death.getImage().getHeight(null)+160);
         if(hamlet.isVisible()) {
             g.drawImage(hamlet.getImage(), hamlet.getX(), hamlet.getY(), null);
         } else {
@@ -283,6 +283,7 @@ public class Game implements Runnable {
         if(shield.isVisible()) g.drawImage(shield.getImage(), shield.getX(), shield.getY(), null);
         if(enteredBoundary(hamlet, deathBox) && hamlet.isVisible()) {
             g.drawImage(fightScreen.getImage(), fightScreen.getX(), fightScreen.getY(), null);
+            lerp(death, hamlet);
         }
     }
 
@@ -323,6 +324,21 @@ public class Game implements Runnable {
     private boolean enteredBoundary(Sprite s, Rectangle rect) {
         Rectangle sBounds = new Rectangle(getObjectBounds(s));
         return sBounds.intersects(rect);
+    }
+
+    private void lerp(Sprite s1, Sprite s2) {
+        while((s1.getX() != s2.getX()) && (s1.getY() != s2.getY())) {
+            if(s1.getX() < s2.getX()) {
+                s1.setX(s1.getX() + 1);
+            } else if(s1.getX() > s2.getX()){
+                s1.setX(s1.getX() - 1);
+            }
+            if(s1.getY() < s2.getY()) {
+                s1.setY(s1.getY() + 1);
+            } else if(s1.getY() > s2.getY()){
+                s1.setY(s1.getY() - 1);
+            }
+        }
     }
 
     private int calcCenter(String text, Font font, FontRenderContext fontRenderContext) {
